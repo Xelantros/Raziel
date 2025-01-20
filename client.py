@@ -61,6 +61,7 @@ class App(CTk):
         self.main_frame.textbox.configure(state="normal")
         self.main_frame.textbox.insert("end", f"{self.username}: {text}\n")
         self.main_frame.textbox.configure(state="disabled")
+        self.main_frame.textbox.yview("end")
         self.client.send(dumps(["SEND_MESSAGE", self.username, self.current_chat, text]).encode())
 
     def get_message_history(self, username) -> List[Tuple[str, str, str, str]]:

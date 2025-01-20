@@ -91,6 +91,7 @@ class MainFrame(CTkFrame):
         for row in history:
             self.textbox.insert("end", f"{row[0]}: {row[2]}\n")
         self.textbox.configure(state="disabled")
+        self.textbox.yview("end")
 
 
     def send_message_wrapper(self, event):
