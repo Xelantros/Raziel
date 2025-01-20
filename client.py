@@ -14,7 +14,15 @@ VERSION = "0.0.1"
 SERVER_ADDRESS = ("127.0.0.1", 8080)
 
 
-class App(CTk):
+class Singleton(type):
+    _instances = {}
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
+        return cls._instances[cls]
+
+
+class App(CTk, metaclass=Singleton):
     def __init__(self, version : str, server_address : Tuple[str, int]):
         super().__init__()
 
