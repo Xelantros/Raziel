@@ -169,7 +169,7 @@ class RegisterFrame(CTkFrame):
         self.register_frame = CTkFrame(master=self, width=frame_width, height=frame_height)
         self.register_frame.place(relx=0.5, rely=0.5, anchor="c")
 
-        logo = CTkImage(dark_image=Image.open("triorb.png"), size=(150, 150))
+        logo = CTkImage(dark_image=Image.open("assets/triorb.png"), size=(150, 150))
 
         self.lbl_image = CTkLabel(master=self.register_frame, text="", image=logo, width=widgets_width, height=150)
         self.lbl_image.place(x=(frame_width - widgets_width) / 2, y=5)
@@ -197,11 +197,17 @@ class RegisterFrame(CTkFrame):
         password1 = self.entry_password1.get()
         password2 = self.entry_password2.get()
 
-        if len(username) <= 3:
-            self.lbl_register_status.configure(text="Имя пользователя слишком короткое", text_color="#c90808")
+        if len(username) <= 5:
+            self.lbl_register_status.configure(text="Имя пользователя должно состоять\n не менее чем из 5 символов", text_color="#c90808")
             return
-        if len(password1) < 8:
+        if len(username) > 20:
+            self.lbl_register_status.configure(text="Длина имени пользователя не\n должна превышать 20 символов", text_color="#c90808")
+            return
+        if len(password1) <= 8:
             self.lbl_register_status.configure(text="Пароль должен состоять\n не менее чем из 8 символов", text_color="#c90808")
+            return
+        if len(password1) > 50:
+            self.lbl_register_status.configure(text="Длина пароля не должна\n превышать 50 символов", text_color="#c90808")
             return
         if password1 != password2:
             self.lbl_register_status.configure(text="Пароли не совпадают", text_color="#c90808")
@@ -216,4 +222,4 @@ class RegisterFrame(CTkFrame):
             self.lbl_register_status.configure(text="Имя пользователя занято", text_color="#c90808")
             return
         else:
-            self.lbl_login_status.configure(text=f"Неизвестный статус регистрации: {status}", text_color="#c90808")
+            self.lbl_register_status.configure(text=f"Неизвестный статус регистрации: {status}", text_color="#c90808")
