@@ -25,7 +25,7 @@ class MainFrame(CTkFrame):
         self.button_frame = CTkFrame(master=self.left_frame, width=200, height=40)
         self.button_frame.pack(side="bottom", fill="x", padx=5, pady=5)
 
-        self.logout_btn = CTkButton(self.button_frame, width=40, height=40)
+        self.logout_btn = CTkButton(self.button_frame, width=40, height=40, text="Logout", command=self.master.logout)
         self.logout_btn.pack(side="left", padx=5, pady=5)
 
         self.settings_btn = CTkButton(self.button_frame, width=40, height=40)

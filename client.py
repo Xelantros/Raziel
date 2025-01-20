@@ -80,6 +80,12 @@ class App(CTk):
                 self.server_answer = None
                 return temp
 
+    def logout(self):
+        self.username = None
+        self.current_chat = None
+        self.server_answer = None
+        self.open_login_frame()
+
     def check_if_user_is_registered(self, username):
         self.client.send(dumps(["REGISTER_CHECK", username]).encode())
         while True:
