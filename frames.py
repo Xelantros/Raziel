@@ -168,7 +168,7 @@ class RegisterFrame(CTkFrame):
         self.register_frame = CTkFrame(master=self, width=frame_width, height=frame_height)
         self.register_frame.place(relx=0.5, rely=0.5, anchor="c")
 
-        logo = CTkImage(dark_image=Image.open("assets/triorb.png"), size=(150, 150))
+        logo = CTkImage(dark_image=Image.open("triorb.png"), size=(150, 150))
 
         self.lbl_image = CTkLabel(master=self.register_frame, text="", image=logo, width=widgets_width, height=150)
         self.lbl_image.place(x=(frame_width - widgets_width) / 2, y=5)
