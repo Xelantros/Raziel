@@ -64,6 +64,9 @@ class App(CTk):
         self.main_frame.textbox.yview("end")
         self.client.send(dumps(["SEND_MESSAGE", self.username, self.current_chat, text]).encode())
 
+    def request_deletion_of_message_history(self, username : str):
+        self.client.send(dumps(["DELETE_MESSAGE_HISTORY", self.username, username]).encode())
+
     def get_message_history(self, username) -> List[Tuple[str, str, str, str]]:
         self.client.send(dumps(["GET_MESSAGE_HISTORY", self.username, username]).encode())
         while True:
@@ -114,7 +117,7 @@ class App(CTk):
                     self.main_frame.textbox.insert("end", f"{data[1]}: {data[2]}\n")
                     self.main_frame.textbox.configure(state="disabled")
             else:
-                print("Unknown server answer")
+                raise ValueError
 
 
 if __name__ == "__main__":

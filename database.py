@@ -75,7 +75,13 @@ class Database:
         return history
 
 
-    #def delete_message_history(self, username1 : str, username2 : str) -> None:
+    def delete_message_history(self, username1 : str, username2 : str) -> None:
+        self.cursor.execute('''
+                DELETE FROM Messages
+                WHERE sender = ? AND receiver = ? OR sender = ? AND receiver = ?
+                ''', (username1, username2, username2, username1))
+
+        self.connection.commit()
 
 
     def get_user_password(self, username : str) -> str:

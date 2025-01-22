@@ -57,6 +57,8 @@ class Server:
                 elif scode == "GET_MESSAGE_HISTORY":
                     history = db.load_message_history(data[1], data[2])
                     client.send(dumps(["MESSAGE_HISTORY", history]).encode())
+                elif scode == "DELETE_MESSAGE_HISTORY":
+                    db.delete_message_history(data[1], data[2])
                 elif scode == "SEND_MESSAGE":
                     db.add_message(data[1], data[2], data[3])
                     if self.online_users.get(data[2], 0) != 0:

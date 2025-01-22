@@ -71,11 +71,20 @@ class MainFrame(CTkFrame):
                                       text="D",
                                       fg_color="red",
                                       anchor="e",
-                                      command=lambda: friend_btn.destroy())
+                                      command=lambda: self.delete_friend(friend_btn, content))
             delete_friend_btn.place(x=165, y=5)
         else:
             pass
             #Сообщить, что такого юзера нет при помощи инфобокса
+
+
+    def delete_friend(self, button : CTkButton, username : str) -> None:
+        button.destroy()
+        self.master.request_deletion_of_message_history(username)
+        if self.master.current_chat == username:
+            self.master.current_chat = None
+            self.cur_chat_lbl.configure(text="")
+
 
     def open_chat(self, username):
         if self.master.current_chat == username:
