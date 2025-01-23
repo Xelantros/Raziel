@@ -84,6 +84,21 @@ class Database:
         self.connection.commit()
 
 
+    def get_user_friends(self, username : str) -> List[str]:
+        self.cursor.execute('''
+        SELECT * FROM Messages
+        WHERE sender = ? OR receiver = ?
+        ''', (username, username))
+
+        friends = set()
+        for row in self.cursor.fetchall():
+            if row[1] == username:
+                friends.add(row[2])
+            else:
+                friends.add(row[1])
+        return list(friends)
+
+
     def get_user_password(self, username : str) -> str:
         self.cursor.execute('''
         SELECT password FROM Users

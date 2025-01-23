@@ -65,6 +65,8 @@ class Server:
                         self.online_users[data[2]].send(dumps(["MESSAGE", data[1], data[3]]).encode())
                 elif scode == "REGISTER_CHECK":
                     client.send(dumps(["REGISTER_CHECK", db.check_if_user_exists(data[1])]).encode())
+                elif scode == "FRIENDS":
+                    client.send(dumps(["FRIENDS", db.get_user_friends(data[1])]).encode())
                 else:
                     print(f'[?] Unknown request: {scode}')
 

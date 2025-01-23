@@ -75,6 +75,14 @@ class App(CTk):
                 self.server_answer = None
                 return temp
 
+    def request_friends_list(self):
+        self.client.send(dumps(["FRIENDS", self.username]).encode())
+        while True:
+            if self.server_answer is not None:
+                temp = self.server_answer
+                self.server_answer = None
+                return temp
+
     def login(self, username : str, password : str) -> str:
         self.client.send(dumps(["LOGIN", username, password]).encode())
         while True:
@@ -109,7 +117,7 @@ class App(CTk):
         while True:
             data = loads(self.client.recv(4096).decode())
             scode = data[0]
-            if scode == "STATUS" or scode == "MESSAGE_HISTORY" or scode == "REGISTER_CHECK":
+            if scode == "STATUS" or scode == "MESSAGE_HISTORY" or scode == "REGISTER_CHECK" or scode == "FRIENDS":
                 self.server_answer = data[1]
             elif scode == "MESSAGE":
                 if self.current_chat == data[1] and self.main_frame.name == "MainFrame":

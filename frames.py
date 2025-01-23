@@ -52,31 +52,35 @@ class MainFrame(CTkFrame):
         self.msg_entry.bind(sequence="<Return>", command=self.send_message_wrapper)
         self.msg_entry.pack(side="bottom", fill="x", padx=5, pady=5)
 
+        self.display_friends_buttons()
+
     def add_friend(self):
         dialog = CTkInputDialog(text="Введите имя друга:", title="Add friend")
         content = dialog.get_input()
 
         if content and content != self.master.username and self.master.check_if_user_is_registered(content):
-            friend_btn = CTkButton(master=self.scroll_frame,
+            self.create_full_friend_button(content)
+        else:
+            pass
+            #Сообщить, что такого юзера нет при помощи инфобокса
+
+    def create_full_friend_button(self, friend_username):
+        friend_btn = CTkButton(master=self.scroll_frame,
                                height=30,
                                corner_radius=0,
                                fg_color="#33322d",
-                               text=content,
+                               text=friend_username,
                                anchor="w",
-                               command=lambda: self.open_chat(content)) # <--- Подсказка нейросети
-            friend_btn.pack(fill="x")
+                               command=lambda: self.open_chat(friend_username))  # <--- Подсказка нейросети
+        friend_btn.pack(fill="x")
 
-            delete_friend_btn = CTkButton(master=friend_btn,
+        delete_friend_btn = CTkButton(master=friend_btn,
                                       width=30,
                                       height=30,
                                       text="D",
                                       fg_color="red",
-                                      command=lambda: self.delete_friend(friend_btn, content))
-            delete_friend_btn.place(x=self.lww - 30, y=0) #<-------- Костыль!
-            print(friend_btn.winfo_reqwidth())
-        else:
-            pass
-            #Сообщить, что такого юзера нет при помощи инфобокса
+                                      command=lambda: self.delete_friend(friend_btn, friend_username))
+        delete_friend_btn.place(x=self.lww - 30, y=0)  # <-------- Костыль!
 
 
     def delete_friend(self, button : CTkButton, username : str) -> None:
@@ -109,6 +113,12 @@ class MainFrame(CTkFrame):
         self.msg_entry.delete("0", "end")
         if content and self.master.current_chat:
             self.master.send_message(content)
+
+
+    def display_friends_buttons(self):
+        friends = self.master.request_friends_list()
+        for friend in friends:
+            self.create_full_friend_button(friend)
 
 
 class LoginFrame(CTkFrame):
