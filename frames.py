@@ -13,25 +13,27 @@ class MainFrame(CTkFrame):
 
         # Left
 
-        self.left_frame = CTkFrame(master=self.main_frame, width=200)
+        self.lww = 200
+
+        self.left_frame = CTkFrame(master=self.main_frame, width=self.lww)
         self.left_frame.pack(fill="y", side="left")
 
-        self.add_btn = CTkButton(master=self.left_frame, width=200, height=20, text="Добавить друга" ,command=self.add_friend)
+        self.add_btn = CTkButton(master=self.left_frame, width=self.lww, height=20, text="Добавить друга", command=self.add_friend)
         self.add_btn.pack(side="top", fill="x", padx=5, pady=5)
 
-        self.scroll_frame = CTkScrollableFrame(master=self.left_frame, width=200)
+        self.scroll_frame = CTkScrollableFrame(master=self.left_frame, width=self.lww)
         self.scroll_frame.pack(fill="both", expand=True, padx=5, pady=5)
 
-        self.button_frame = CTkFrame(master=self.left_frame, width=200, height=40)
+        self.button_frame = CTkFrame(master=self.left_frame, width=self.lww, height=40)
         self.button_frame.pack(side="bottom", fill="x", padx=5, pady=5)
 
         self.logout_btn = CTkButton(self.button_frame, width=40, height=40, text="Logout", command=self.master.logout)
         self.logout_btn.pack(side="left", padx=5, pady=5)
 
-        self.settings_btn = CTkButton(self.button_frame, width=40, height=40)
+        self.settings_btn = CTkButton(self.button_frame, width=40, height=40, text="")
         self.settings_btn.pack(side="left", padx=5, pady=5)
 
-        self.info_btn = CTkButton(self.button_frame, width=40, height=40)
+        self.info_btn = CTkButton(self.button_frame, width=40, height=40, text="")
         self.info_btn.pack(side="left", padx=5, pady=5)
 
         # Right
@@ -56,7 +58,6 @@ class MainFrame(CTkFrame):
 
         if content and content != self.master.username and self.master.check_if_user_is_registered(content):
             friend_btn = CTkButton(master=self.scroll_frame,
-                               width=200,
                                height=30,
                                corner_radius=0,
                                fg_color="#33322d",
@@ -66,13 +67,13 @@ class MainFrame(CTkFrame):
             friend_btn.pack(fill="x")
 
             delete_friend_btn = CTkButton(master=friend_btn,
-                                      width=20,
-                                      height=20,
+                                      width=30,
+                                      height=30,
                                       text="D",
                                       fg_color="red",
-                                      anchor="e",
                                       command=lambda: self.delete_friend(friend_btn, content))
-            delete_friend_btn.place(x=165, y=5)
+            delete_friend_btn.place(x=self.lww - 30, y=0) #<-------- Костыль!
+            print(friend_btn.winfo_reqwidth())
         else:
             pass
             #Сообщить, что такого юзера нет при помощи инфобокса
