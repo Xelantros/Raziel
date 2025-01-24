@@ -27,7 +27,7 @@ class Server:
         while self.running:
             client, addr = self.server.accept()
             threading.Thread(target=self.connection_handler, args=(client, )).start()
-            print("[+] User has connected to server")
+            print(f"[+] User {addr} has connected to server")
 
     def connection_handler(self, client : socket.socket):
         username = None
