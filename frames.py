@@ -54,6 +54,13 @@ class MainFrame(CTkFrame):
 
         self.display_friends_buttons()
 
+
+    def clear_textbox(self):
+        self.textbox.configure(state="normal")
+        self.textbox.delete(0.0, "end")
+        self.textbox.configure(state="disabled")
+
+
     def add_friend(self):
         dialog = CTkInputDialog(text="Введите имя друга:", title="Add friend")
         content = dialog.get_input()
@@ -89,6 +96,7 @@ class MainFrame(CTkFrame):
         if self.master.current_chat == username:
             self.master.current_chat = None
             self.cur_chat_lbl.configure(text="")
+            self.clear_textbox()
 
 
     def open_chat(self, username):
@@ -97,9 +105,7 @@ class MainFrame(CTkFrame):
 
         self.master.current_chat = username
         self.cur_chat_lbl.configure(text=username)
-        self.textbox.configure(state="normal")
-        self.textbox.delete(0.0, "end")
-        self.textbox.configure(state="disabled")
+        self.clear_textbox()
         history = self.master.get_message_history(username)
         self.textbox.configure(state="normal")
         for row in history:
@@ -134,26 +140,54 @@ class LoginFrame(CTkFrame):
 
         self.login_frame = CTkFrame(master=self, width=frame_width, height=frame_height)
         self.login_frame.place(relx=0.5, rely=0.5, anchor="c")
+        self.login_frame.pack_propagate(False)
 
         logo = CTkImage(dark_image=Image.open("assets/triorb.png"), size=(150, 150))
 
-        self.lbl_image = CTkLabel(master=self.login_frame, text="", image=logo, width=widgets_width, height=150)
-        self.lbl_image.place(x=(frame_width - widgets_width) / 2, y=5)
+        self.lbl_image = CTkLabel(master=self.login_frame, text="", image=logo, width=150, height=150)
+        self.lbl_image.pack(pady=2.5)
 
-        self.entry_username = CTkEntry(master=self.login_frame, width=widgets_width, height=widgets_height, placeholder_text="Введите имя пользователя")
-        self.entry_username.place(x=(frame_width - widgets_width) / 2, y=160)
+        self.entry_username = CTkEntry(master=self.login_frame, width=widgets_width, height=widgets_height,
+                                       placeholder_text="Введите имя пользователя")
+        self.entry_username.pack(pady=2.5)
 
-        self.entry_password = CTkEntry(master=self.login_frame, width=widgets_width, height=widgets_height, placeholder_text="Введите пароль")
-        self.entry_password.place(x=(frame_width - widgets_width) / 2, y=160 + widgets_height + 5)
+        self.entry_password = CTkEntry(master=self.login_frame, width=widgets_width, height=widgets_height,
+                                       placeholder_text="Введите пароль", show="•")
+        self.entry_password.pack(pady=2.5)
 
-        self.btn_submit = CTkButton(master=self.login_frame, width=widgets_width, height=widgets_height, text="Войти", command=self.login_wrapper)
-        self.btn_submit.place(x=(frame_width - widgets_width) / 2, y=160 + 2 * widgets_height + 10)
+        self.show_pass_var = StringVar(value="hide")
+        self.checkbox_show_hide_password = CTkCheckBox(master=self.login_frame,
+                                                       width=widgets_width,
+                                                       height=widgets_height,
+                                                       text="Показать пароль",
+                                                       onvalue="show",
+                                                       offvalue="hide",
+                                                       variable=self.show_pass_var,
+                                                       command=self.show_hide_password)
+        self.checkbox_show_hide_password.pack(pady=2.5)
 
-        self.btn_go_to_reg = CTkButton(master=self.login_frame, width=widgets_width, height=widgets_height, text="Зарегистрироваться", command=self.master.open_register_frame)
-        self.btn_go_to_reg.place(x=(frame_width - widgets_width) / 2, y=160 + 3 * widgets_height + 15)
+        self.checkbox_remember = CTkCheckBox(master=self.login_frame, width=widgets_width, height=widgets_height,
+                                             text="Запомнить меня", checkbox_width=25, checkbox_height=25)
+        #self.checkbox_remember.pack(pady=2.5)
+
+        self.btn_submit = CTkButton(master=self.login_frame, width=widgets_width, height=widgets_height, text="Войти",
+                                    command=self.login_wrapper)
+        self.btn_submit.pack(pady=2.5)
+
+        self.btn_go_to_reg = CTkButton(master=self.login_frame, width=widgets_width, height=widgets_height,
+                                       text="Зарегистрироваться", command=self.master.open_register_frame)
+        self.btn_go_to_reg.pack(pady=2.5)
 
         self.lbl_login_status = CTkLabel(master=self.login_frame, width=widgets_width, height=widgets_height, text="")
-        self.lbl_login_status.place(x=(frame_width - widgets_width) / 2, y=160 + 4 * widgets_height + 20)
+        self.lbl_login_status.pack(pady=2.5)
+
+
+    def show_hide_password(self):
+        if self.show_pass_var.get() == "show":
+            self.entry_password.configure(show="")
+        else:
+            self.entry_password.configure(show="•")
+
 
     def login_wrapper(self):
         username = self.entry_username.get()

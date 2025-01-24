@@ -1,6 +1,7 @@
 import threading
 from customtkinter import *
 import socket
+import sys
 from json import dumps, loads
 from typing import Tuple, List
 from frames import LoginFrame, RegisterFrame, MainFrame
@@ -129,5 +130,12 @@ class App(CTk):
 
 
 if __name__ == "__main__":
+
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.bind(('127.0.0.1', 65432))
+    except socket.error:
+        sys.exit()
+
     app = App(VERSION, SERVER_ADDRESS)
     app.mainloop()
