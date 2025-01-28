@@ -324,6 +324,10 @@ class SettingsFrame(CTkFrame):
         self.return_btn = CTkButton(master=self, text="Вернуться", command=self.master.open_main_frame)
         self.return_btn.place(x=5, y=5)
 
-        self.delete_account_btn = CTkButton(master=self.settings_frame, text="Удалить аккаунт")
+        self.delete_account_btn = CTkButton(master=self.settings_frame, text="Удалить аккаунт", command=self.delete_account)
         self.delete_account_btn.pack(padx=2.5, pady=2.5, fill="x", side="bottom")
+
+    def delete_account(self):
+        self.master.request_account_deletion()
+        self.master.logout()
 

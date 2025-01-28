@@ -11,7 +11,7 @@ set_appearance_mode("dark")
 set_default_color_theme("blue")
 
 
-VERSION = "0.0.1"
+VERSION = "0.0.7"
 SERVER_ADDRESS = ("127.0.0.1", 8080)
 
 
@@ -101,7 +101,7 @@ class App(CTk):
     def logout(self):
         self.username = None
         self.current_chat = None
-        self.server_answer = None
+        self.friends_list = []
         self.open_login_frame()
 
     def check_if_user_is_registered(self, username):
@@ -120,6 +120,9 @@ class App(CTk):
                 self.server_answer = None
                 return temp
 
+    def request_account_deletion(self):
+        self.client.send(dumps(["DELETE_ACCOUNT", self.username]).encode())
+
     def server_answers_handler(self):
         while True:
             data = loads(self.client.recv(4096).decode())
@@ -131,12 +134,16 @@ class App(CTk):
                     self.main_frame.textbox.configure(state="normal")
                     self.main_frame.textbox.insert("end", f"{data[1]}: {data[2]}\n")
                     self.main_frame.textbox.configure(state="disabled")
+                elif self.main_frame.name == "MainFrame" and data[1] not in self.friends_list:
+                    self.friends_list.append(data[1])
+                    self.main_frame.create_full_friend_button(data[1])
             else:
                 raise ValueError
 
 
 if __name__ == "__main__":
 
+    #Механизм, предотвращающий повторное открытие приложения, если оно уже запущено
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.bind(('127.0.0.1', 65432))
