@@ -4,7 +4,7 @@ import socket
 import sys
 from json import dumps, loads
 from typing import Tuple, List
-from frames import LoginFrame, RegisterFrame, MainFrame
+from frames import LoginFrame, RegisterFrame, MainFrame, SettingsFrame
 
 
 set_appearance_mode("dark")
@@ -26,18 +26,19 @@ class App(CTk):
 
         self.username = None
         self.current_chat = None
+        self.friends_list = []
 
         threading.Thread(target=self.server_answers_handler, daemon=True).start()
         self.server_answer = None
 
         base_width = 600
-        base_height = 400
+        base_height = 450
 
         spawn_x = (self.winfo_screenwidth() - base_width) // 2
         spawn_y = (self.winfo_screenheight() - base_height) // 2
 
         self.geometry(f"{base_width}x{base_height}+{spawn_x}+{spawn_y - 100}")
-        self.minsize(600, 400)
+        self.minsize(base_width, base_height)
         self.title(f"Raziel v{self.version}")
 
         self.main_frame = LoginFrame(self)
@@ -56,6 +57,11 @@ class App(CTk):
     def open_register_frame(self):
         self.main_frame.destroy()
         self.main_frame = RegisterFrame(self)
+        self.main_frame.pack(expand=True, fill="both")
+
+    def open_settings_frame(self):
+        self.main_frame.destroy()
+        self.main_frame = SettingsFrame(self)
         self.main_frame.pack(expand=True, fill="both")
 
     def send_message(self, text):

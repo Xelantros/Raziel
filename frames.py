@@ -27,14 +27,11 @@ class MainFrame(CTkFrame):
         self.button_frame = CTkFrame(master=self.left_frame, width=self.lww, height=40)
         self.button_frame.pack(side="bottom", fill="x", padx=5, pady=5)
 
-        self.logout_btn = CTkButton(self.button_frame, width=40, height=40, text="Logout", command=self.master.logout)
+        self.logout_btn = CTkButton(self.button_frame, width=self.lww // 2, height=40, text="Выход", command=self.master.logout)
         self.logout_btn.pack(side="left", padx=5, pady=5)
 
-        self.settings_btn = CTkButton(self.button_frame, width=40, height=40, text="")
+        self.settings_btn = CTkButton(self.button_frame, width=self.lww // 2, height=40, text="Настройки", command=self.master.open_settings_frame)
         self.settings_btn.pack(side="left", padx=5, pady=5)
-
-        self.info_btn = CTkButton(self.button_frame, width=40, height=40, text="")
-        self.info_btn.pack(side="left", padx=5, pady=5)
 
         # Right
 
@@ -65,7 +62,8 @@ class MainFrame(CTkFrame):
         dialog = CTkInputDialog(text="Введите имя друга:", title="Add friend")
         content = dialog.get_input()
 
-        if content and content != self.master.username and self.master.check_if_user_is_registered(content):
+        if content and content != self.master.username and self.master.check_if_user_is_registered(content) and content not in self.master.friends_list:
+            self.master.friends_list.append(content)
             self.create_full_friend_button(content)
         else:
             pass
@@ -92,6 +90,7 @@ class MainFrame(CTkFrame):
 
     def delete_friend(self, button : CTkButton, username : str) -> None:
         button.destroy()
+        self.master.friends_list.remove(username)
         self.master.request_deletion_of_message_history(username)
         if self.master.current_chat == username:
             self.master.current_chat = None
@@ -124,6 +123,7 @@ class MainFrame(CTkFrame):
     def display_friends_buttons(self):
         friends = self.master.request_friends_list()
         for friend in friends:
+            self.master.friends_list.append(friend)
             self.create_full_friend_button(friend)
 
 
@@ -134,7 +134,7 @@ class LoginFrame(CTkFrame):
         self.name = "LoginFrame"
 
         frame_width = 350
-        frame_height = 350
+        frame_height = 400
         widgets_width = 250
         widgets_height = 25
 
@@ -166,8 +166,8 @@ class LoginFrame(CTkFrame):
                                                        command=self.show_hide_password)
         self.checkbox_show_hide_password.pack(pady=2.5)
 
-        self.checkbox_remember = CTkCheckBox(master=self.login_frame, width=widgets_width, height=widgets_height,
-                                             text="Запомнить меня", checkbox_width=25, checkbox_height=25)
+        #self.checkbox_remember = CTkCheckBox(master=self.login_frame, width=widgets_width, height=widgets_height,
+        #                                     text="Запомнить меня", checkbox_width=25, checkbox_height=25)
         #self.checkbox_remember.pack(pady=2.5)
 
         self.btn_submit = CTkButton(master=self.login_frame, width=widgets_width, height=widgets_height, text="Войти",
@@ -194,7 +194,7 @@ class LoginFrame(CTkFrame):
         password = self.entry_password.get()
 
         if len(username) == 0 or len(password) == 0:
-            self.lbl_login_status.configure(text="Ты серьёзно?", text_color="#c90808")
+            self.lbl_login_status.configure(text="Введите логин и пароль", text_color="#c90808")
             return
 
         status = self.master.login(username, password)
@@ -216,7 +216,7 @@ class RegisterFrame(CTkFrame):
         self.name = "RegisterFrame"
 
         frame_width = 350
-        frame_height = 350
+        frame_height = 400
         widgets_width = 250
         widgets_height = 25
 
@@ -309,3 +309,21 @@ class RegisterFrame(CTkFrame):
             return
         else:
             self.lbl_register_status.configure(text=f"Неизвестный статус регистрации: {status}", text_color="#c90808")
+
+
+class SettingsFrame(CTkFrame):
+    def __init__(self, master):
+        super().__init__(master)
+        self.master = master
+        self.name = "SettingsFrame"
+
+        self.settings_frame = CTkFrame(master=self, width=350, height=350)
+        self.settings_frame.place(relx=0.5, rely=0.5, anchor="c")
+        self.settings_frame.pack_propagate(False)
+
+        self.return_btn = CTkButton(master=self, text="Вернуться", command=self.master.open_main_frame)
+        self.return_btn.place(x=5, y=5)
+
+        self.delete_account_btn = CTkButton(master=self.settings_frame, text="Удалить аккаунт")
+        self.delete_account_btn.pack(padx=2.5, pady=2.5, fill="x", side="bottom")
+
