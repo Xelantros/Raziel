@@ -99,6 +99,7 @@ class App(CTk):
                 return temp
 
     def logout(self):
+        self.client.send(dumps(["LOGOUT", self.username]).encode())
         self.username = None
         self.current_chat = None
         self.friends_list = []

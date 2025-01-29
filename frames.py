@@ -328,6 +328,5 @@ class SettingsFrame(CTkFrame):
         self.delete_account_btn.pack(padx=2.5, pady=2.5, fill="x", side="bottom")
 
     def delete_account(self):
-        self.master.request_account_deletion()
         self.master.logout()
-
+        self.master.request_account_deletion()

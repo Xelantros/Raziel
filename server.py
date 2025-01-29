@@ -67,6 +67,9 @@ class Server:
                     client.send(dumps(["REGISTER_CHECK", db.check_if_user_exists(data[1])]).encode())
                 elif scode == "FRIENDS":
                     client.send(dumps(["FRIENDS", db.get_user_friends(data[1])]).encode())
+                elif scode == "LOGOUT":
+                    self.online_users.pop(data[1])
+                    print("[~] User logged out of the account")
                 elif scode == "DELETE_ACCOUNT":
                     db.delete_user(data[1])
                 else:
