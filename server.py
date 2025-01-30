@@ -26,10 +26,10 @@ class Server:
         print("[*] Server is listening for connections")
         while self.running:
             client, addr = self.server.accept()
-            threading.Thread(target=self.connection_handler, args=(client, )).start()
+            threading.Thread(target=self.connection_handler, args=(client, addr)).start()
             print(f"[+] User {addr} has connected to server")
 
-    def connection_handler(self, client : socket.socket):
+    def connection_handler(self, client : socket.socket, client_address : Tuple[str, int]):
         username = None
         db = Database("Raziel")
 
@@ -44,16 +44,18 @@ class Server:
                         client.send(dumps(["STATUS", "INCORRECT_PASSWORD"]).encode())
                     else:
                         username = data[1]
-                        self.online_users[data[1]] = client #<---- Может вызвать проблемы
+                        self.online_users[data[1]] = client
                         client.send(dumps(["STATUS", "SUCCESS"]).encode())
+                        print(f"[@] User {client_address} logged in as '{username}'")
                 elif scode == "REGISTER":
                     if db.check_if_user_exists(data[1]):
                         client.send(dumps(["STATUS", "USERNAME_IS_ALREADY_TAKEN"]).encode())
                     else:
                         db.add_user(data[1], data[2])
                         username = data[1]
-                        self.online_users[data[1]] = client #<---- Может вызвать проблемы
+                        self.online_users[data[1]] = client
                         client.send(dumps(["STATUS", "SUCCESS"]).encode())
+                        print(f"[@] User {client_address} registered as '{username}'")
                 elif scode == "GET_MESSAGE_HISTORY":
                     history = db.load_message_history(data[1], data[2])
                     client.send(dumps(["MESSAGE_HISTORY", history]).encode())
@@ -69,9 +71,10 @@ class Server:
                     client.send(dumps(["FRIENDS", db.get_user_friends(data[1])]).encode())
                 elif scode == "LOGOUT":
                     self.online_users.pop(data[1])
-                    print("[~] User logged out of the account")
+                    print(f"[~] User {client_address} logged out of the account '{data[1]}'")
                 elif scode == "DELETE_ACCOUNT":
                     db.delete_user(data[1])
+                    print(f"[@] User {client_address} deleted the account '{username}'")
                 else:
                     print(f'[?] Unknown request: {scode}')
 

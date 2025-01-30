@@ -1,10 +1,11 @@
 import threading
 from customtkinter import *
 import socket
-import sys
 from json import dumps, loads
 from typing import Tuple, List
 from frames import LoginFrame, RegisterFrame, MainFrame, SettingsFrame
+import sys
+import hashlib
 
 
 set_appearance_mode("dark")
@@ -91,7 +92,7 @@ class App(CTk):
                 return temp
 
     def login(self, username : str, password : str) -> str:
-        self.client.send(dumps(["LOGIN", username, password]).encode())
+        self.client.send(dumps(["LOGIN", username, self.hash_password(password)]).encode())
         while True:
             if self.server_answer is not None:
                 temp = self.server_answer
@@ -114,7 +115,7 @@ class App(CTk):
                 return temp
 
     def sign_up(self, username : str, password : str) -> str:
-        self.client.send(dumps(["REGISTER", username, password]).encode())
+        self.client.send(dumps(["REGISTER", username, self.hash_password(password)]).encode())
         while True:
             if self.server_answer is not None:
                 temp = self.server_answer
@@ -140,6 +141,9 @@ class App(CTk):
                     self.main_frame.create_full_friend_button(data[1])
             else:
                 raise ValueError
+
+    def hash_password(self, password : str) -> str:
+        return hashlib.sha256(password.encode()).hexdigest()
 
 
 if __name__ == "__main__":

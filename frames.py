@@ -1,5 +1,6 @@
 from customtkinter import *
 from PIL import Image
+from infobox import InfoBox
 
 
 class MainFrame(CTkFrame):
@@ -66,8 +67,7 @@ class MainFrame(CTkFrame):
             self.master.friends_list.append(content)
             self.create_full_friend_button(content)
         else:
-            pass
-            #Сообщить, что такого юзера нет при помощи инфобокса
+            InfoBox(master=self, text="Такого пользователя не существует", title="Ошибка")
 
     def create_full_friend_button(self, friend_username):
         friend_btn = CTkButton(master=self.scroll_frame,
@@ -283,13 +283,13 @@ class RegisterFrame(CTkFrame):
         password1 = self.entry_password1.get()
         password2 = self.entry_password2.get()
 
-        if len(username) <= 5:
+        if len(username) < 5:
             self.lbl_register_status.configure(text="Имя пользователя должно состоять\n не менее чем из 5 символов", text_color="#c90808")
             return
         if len(username) > 20:
             self.lbl_register_status.configure(text="Длина имени пользователя не\n должна превышать 20 символов", text_color="#c90808")
             return
-        if len(password1) <= 8:
+        if len(password1) < 8:
             self.lbl_register_status.configure(text="Пароль должен состоять\n не менее чем из 8 символов", text_color="#c90808")
             return
         if len(password1) > 50:
@@ -317,6 +317,8 @@ class SettingsFrame(CTkFrame):
         self.master = master
         self.name = "SettingsFrame"
 
+        self.master.current_chat = None
+
         self.settings_frame = CTkFrame(master=self, width=350, height=350)
         self.settings_frame.place(relx=0.5, rely=0.5, anchor="c")
         self.settings_frame.pack_propagate(False)
@@ -328,5 +330,5 @@ class SettingsFrame(CTkFrame):
         self.delete_account_btn.pack(padx=2.5, pady=2.5, fill="x", side="bottom")
 
     def delete_account(self):
-        self.master.logout()
         self.master.request_account_deletion()
+        self.master.logout()
